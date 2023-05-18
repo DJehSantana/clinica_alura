@@ -1,5 +1,6 @@
 package com.br.alura.clinica.entity;
 
+import com.br.alura.clinica.record.MedicoCadastro;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,4 +20,13 @@ public class Endereco {
     private String uf;
     private String cep;
 
+    public Endereco(com.br.alura.clinica.record.Endereco dados) {
+        this.logradouro = dados.logradouro();
+        this.numero = dados.numero();
+        this.complemento = dados.complemento();
+        this.bairro = dados.bairro();
+        this.cidade = dados.cidade();
+        this.uf = dados.uf();
+        this.cep = dados.cep();
+    }
 }
