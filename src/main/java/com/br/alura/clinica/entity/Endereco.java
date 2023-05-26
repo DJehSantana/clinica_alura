@@ -29,4 +29,29 @@ public class Endereco {
         this.uf = dados.uf();
         this.cep = dados.cep();
     }
+
+    public void atualizarEndereco(com.br.alura.clinica.record.Endereco endereco) {
+
+        if (endereco.logradouro() != null) {
+            this.logradouro = endereco.logradouro();
+        }
+        if (endereco.cep() != null) {
+            this.cep = endereco.cep();
+        }
+        if (endereco.numero() != null) {
+            this.numero = endereco.numero();
+        }
+        if (endereco.bairro() != null) {
+            this.bairro = endereco.bairro();
+        }
+        if (endereco.complemento() != null) {
+            this.complemento = endereco.complemento();
+        }
+        if (endereco.cidade() != null) {
+            this.cidade = endereco.cidade();
+        }
+        if (endereco.uf() != null) {
+            this.uf = endereco.uf();
+        }
+    }
 }
