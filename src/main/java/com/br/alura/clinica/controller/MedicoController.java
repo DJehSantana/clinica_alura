@@ -1,5 +1,6 @@
 package com.br.alura.clinica.controller;
 
+import com.br.alura.clinica.record.DadosDetalhamentoMedico;
 import com.br.alura.clinica.record.DadosListagemMedico;
 import com.br.alura.clinica.record.MedicoAtualizacao;
 import jakarta.validation.Valid;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,26 +32,28 @@ public class MedicoController {
 
     @GetMapping
     //Pelo @PageableDefault define atributos default da paginação, como
-    public Page<DadosListagemMedico> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
+    public ResponseEntity<Page<DadosListagemMedico>> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
         //.map() -> está chamando o construtor do record DadosListagemMedico
-        return medicoRepository.findAllByAtivoTrue(paginacao).map(DadosListagemMedico::new);
+        var page = medicoRepository.findAllByAtivoTrue(paginacao).map(DadosListagemMedico::new);
+        return ResponseEntity.ok(page);
     }
 
     @PutMapping
     @Transactional
-    public void atualizar(@RequestBody @Valid MedicoAtualizacao dados){
+    public ResponseEntity atualizar(@RequestBody @Valid MedicoAtualizacao dados){
         var medico = medicoRepository.getReferenceById(dados.id());
         medico.atualizarCadastro(dados);
 
+        return ResponseEntity.ok(new DadosDetalhamentoMedico(medico));
     }
 
     @DeleteMapping("/{id}")
     @Transactional
-    public void deletar(@PathVariable Long id) {
+    public ResponseEntity deletar(@PathVariable Long id) {
        var medico = medicoRepository.getReferenceById(id);
        if (medico != null) {
            medico.excluir();
        }
-
+       return ResponseEntity.noContent().build();
     }
 }
