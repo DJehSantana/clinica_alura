@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import com.br.alura.clinica.entity.Medico;
 import com.br.alura.clinica.record.MedicoCadastro;
 import com.br.alura.clinica.repository.MedicoRepository;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -25,9 +26,15 @@ public class MedicoController {
     private MedicoRepository medicoRepository;
     @PostMapping
     @Transactional
-    public MedicoCadastro cadastrar(@RequestBody @Valid MedicoCadastro medico) {
-        medicoRepository.save(new Medico(medico));
-        return medico;
+    public ResponseEntity cadastrar(@RequestBody @Valid MedicoCadastro dadosMedico, UriComponentsBuilder uriBuilder) {
+        var medico = new Medico(dadosMedico);
+        medicoRepository.save(medico);
+
+        //Endereço da api
+        var uri = uriBuilder.path("/medicos/{id}").buildAndExpand(medico.getId()).toUri();
+
+        //O Spring cria o cabeçalho Location automaticamente baseado nessa uri
+        return ResponseEntity.created(uri).body(new DadosDetalhamentoMedico(medico));
     }
 
     @GetMapping
@@ -55,5 +62,12 @@ public class MedicoController {
            medico.excluir();
        }
        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity detalhar(@PathVariable Long id) {
+        var medico = medicoRepository.getReferenceById(id);
+
+        return ResponseEntity.ok(new DadosDetalhamentoMedico(medico));
     }
 }
